@@ -9,4 +9,19 @@
 
 # Make sure your secret_key_base is kept private
 # if you're sharing your code publicly.
-YeniyuvaApp::Application.config.secret_key_base = '3677cae7aca79d3046ee0bb2056a69b1b12fd72e4c13a17a46f59e4e6e483e51047c3764b66812e7147205bace3a85ad27a889f6386c7fae86fc71aaba66ef2c'
+require 'securerandom'
+
+def secure_token
+  token_file = Rails.root.join('.secret')
+  if File.exist?(token_file)
+    # Use the existing token.
+    File.read(token_file).chomp
+  else
+    # Generate a new token and store it in token_file.
+    token = SecureRandom.hex(64)
+    File.write(token_file, token)
+    token
+  end
+end
+
+YeniyuvaApp::Application.config.secret_key_base = secure_token
